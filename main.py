@@ -2,18 +2,25 @@ import user
 import block
 from fastapi import FastAPI
 
-# keeps track of number of orders at each price
+# keeps track of number of sell orders at each price
 countSellOrdersByPrice = dict()
-# keeps track of order objects at each price
+# keeps track of sell orders at each price
 sellOrdersByPrice = dict()
 
-# prints out the dictionary of the counts of sell orders at each price
-def listCountOfSellOrders():
-    orderCounts = "orders: "
-    for price in countSellOrdersByPrice:
-        countAtPrice = countSellOrdersByPrice[price]
-        orderCounts += f'{price}: {countAtPrice},\n'
-    return orderCounts
+# assumes the order hasn't been matched yet
+def findMatch(buyOrder):
+    if buyOrder.command() == "buy":
+        price = buyOrder.getPrice()
+        food = buyOrder.getfoodItem()
+        vendor = buyOrder.getVendor()
+        if countSellOrdersByPrice[price] == 0:
+            return f"Your request was not matched. Please enter a higher price than {price}"
+        else:
+            for sellOrder in sellOrdersByPrice[price]:
+                if sellOrder.getMatchStatus() == False:
+                    if sellOrder.getfoodItem() == food and sellOrder.getVendor() == vendor:
+                        return f'Your request was matched! Connect to {sellOrder.getUserID}'
+
 
 app = FastAPI()
 @app.put("/user")
@@ -24,18 +31,21 @@ def returnUserID(firstName, lastName):
 @app.post("/order")
 def createOrder(typeBlock, price, foodItem, vendor, command, userID):
     newBlock = block(typeBlock, price, foodItem, vendor, command, userID)
-    if command == "sell":
-        if countSellOrdersByPrice[price] == 0:
-            countSellOrdersByPrice[price] = 0
-            sellOrdersByPrice[price] = newBlock
-        else:
-            countSellOrdersByPrice[price] += 1
-            sellOrdersByPrice[price].add(newBlock)
-    return f'matched: {newBlock.getMatchStatus()}\nprice: {newBlock.getPrice}\nmarket_status:{listCountOfSellOrders()}'
+    if command == "sell" or command == "buy":
+        if command == "sell":
+            if countSellOrdersByPrice[price] == 0:
+                countSellOrdersByPrice[price] = 0
+                sellOrdersByPrice[price] = [newBlock]
+            else:
+                countSellOrdersByPrice[price] += 1
+                sellOrdersByPrice[price].append(newBlock)
+    else:
+        return "Incorrect command."
+    return f'matched: {newBlock.getMatchStatus()}\nprice: {newBlock.getPrice}\nmarket_status:{countSellOrdersByPrice}'
 
 @app.get("/market")
 def listMarketState():
-    listCountOfSellOrders()
+    return countSellOrdersByPrice
 
 @app.get("/")
 async def root():
