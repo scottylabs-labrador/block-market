@@ -19,6 +19,9 @@ class block:
     def getMatchStatus(self):
         return self.matched
     
+    def getUserID(self):
+        return self.creatorUserID
+    
     # represents the order as an f-string
     def __repr__(self):
         if self.command == "buy":
