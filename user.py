@@ -1,6 +1,12 @@
 import random
+from pydantic import BaseModel
 
-class users:
+class UserArgs(BaseModel):
+    firstName: str 
+    lastName: str
+
+
+class User:
     def __init__(self, firstName, lastName):
         self.firstName = firstName
         self.lastName = lastName
@@ -16,4 +22,4 @@ class users:
         return self.userID
     
 def createUserID(firstName, lastName):
-    return firstName[0] + lastName + random.randInt(0, 1000)
+    return firstName[0] + lastName + str(random.randint(0, 1000))

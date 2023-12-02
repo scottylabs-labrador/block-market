@@ -1,7 +1,29 @@
 import Image from 'next/image'
 'use client';
+import Link from 'next/link';
+import { useRouter } from "next/router";
+
+
+const SellList = () => {
+  return (
+    <div style={sellerListStyle}>
+      <p>No sales to display</p>
+    </div>
+  );
+};
+
+const sellerListStyle = {
+  marginTop: '10px',
+  padding: '280px',
+  border: '1px solid #ddd',
+  borderRadius: '8px',
+  backgroundColor: '#f9f9f9',
+};
 
 export default function Home() {
+  
+  
+
   const showNotification = () => {
     // Check if the browser supports notifications
     if ('Notification' in window) {
@@ -24,14 +46,13 @@ export default function Home() {
   };
   return (
     <main>
-
-    <div>
-      blockmarket
-    </div>
+      <div>
+      <h1>Welcome to the seller Page</h1>
+      < SellList />
+      </div>
     <div>
       <button type = "button" onClick={showNotification} >
-         "Accept" 
-
+         Accept Sale! 
         </button>
     </div>
   </main>
