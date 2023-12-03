@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@types/braintree-web": "^3.96.1",
+    "braintree-web": "^3.96.1"
+  }
+}
